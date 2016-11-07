@@ -4,8 +4,8 @@ window.onload = function () {
     container: document.getElementById('slider-main-container'),
     color: 'red',
     maxValue: 500,
-    minValue: 10,
-    step: 10,
+    minValue: 0,
+    step: 25,
     radius: 200
   });
   slider.createSlider();
@@ -43,6 +43,7 @@ class Slider {
     var left = 1;
     var right = 0;
     var X, Y;
+    var stepInDegrees = 360 / ((slider.maxValue - slider.minValue) / slider.step);
 
     sliderButton.style.left = radius;
     sliderButton.style.top = 0;
@@ -63,6 +64,12 @@ class Slider {
         var mousePosY = e.pageY - this.offsetTop;
         var arctangent = Math.atan2(mousePosX - radius, mousePosY - radius);
         angle = -arctangent/(Math.PI/180) + 180;
+        if(angle % stepInDegrees > stepInDegrees/2) {
+          angle = (Math.floor(angle/stepInDegrees) + 1) * stepInDegrees;
+        } else {
+          angle = Math.floor(angle/stepInDegrees) * stepInDegrees;
+        }
+
         X = Math.round(radius * Math.sin(angle*Math.PI/180));
         Y = Math.round(radius * -Math.cos(angle*Math.PI/180));
 
