@@ -51,13 +51,21 @@ class Slider {
   }
 
   addProgressElements(radius, offset, sliderNumber) {
+    var backgroundContainer = document.createElement('div');
+    backgroundContainer.style.width = radius*2 - (this.padding*2 * (sliderNumber+1));
+    backgroundContainer.style.height = radius*2 - (this.padding*2 * (sliderNumber+1));
+    backgroundContainer.style.top = offset + (this.padding * (sliderNumber+1));
+    backgroundContainer.style.left = offset + (this.padding * (sliderNumber+1));
+    backgroundContainer.style.position = 'absolute';
+    backgroundContainer.style.backgroundColor = 'transparent';
+
     var background = document.createElement('div');
-    background.style.width = radius*2 - (this.padding*2 * (sliderNumber+1));
-    background.style.height = radius*2 - (this.padding*2 * (sliderNumber+1));
+    background.style.width = radius*2 - (this.padding*2 * (sliderNumber+1)) - 2;
+    background.style.height = radius*2 - (this.padding*2 * (sliderNumber+1)) - 2;
     background.style.borderRadius = radius + 'px';
     background.style.backgroundColor = this.color;
-    background.style.top = offset + (this.padding * (sliderNumber+1));
-    background.style.left = offset + (this.padding * (sliderNumber+1));
+    background.style.top = 1;
+    background.style.left = 1;
     background.style.position = 'absolute';
 
     var backgroundOver = document.createElement('div');
@@ -87,11 +95,11 @@ class Slider {
     backgroundRightOver.style.backgroundColor = '#D0D0D1';
 
     var backgroundRightOverStatic = document.createElement('div');
-    backgroundRightOverStatic.style.width = radius - (this.padding * (sliderNumber+1));
-    backgroundRightOverStatic.style.height = radius*2 - (this.padding*2 * (sliderNumber+1));
+    backgroundRightOverStatic.style.width = radius - (this.padding * (sliderNumber+1)) - 1;
+    backgroundRightOverStatic.style.height = radius*2 - (this.padding*2 * (sliderNumber+1)) - 2;
     backgroundRightOverStatic.style.borderTopRightRadius = radius + 'px';
     backgroundRightOverStatic.style.borderBottomRightRadius = radius + 'px';
-    backgroundRightOverStatic.style.top = 0;
+    backgroundRightOverStatic.style.top = 1;
     backgroundRightOverStatic.style.left = radius - (this.padding * (sliderNumber+1));
     backgroundRightOverStatic.style.position = 'absolute';
     backgroundRightOverStatic.style.backgroundColor = this.color;
@@ -108,10 +116,11 @@ class Slider {
     backgroundOverStatic.style.backgroundColor = 'white';
     
     backgroundOver.appendChild(backgroundRightOver);
-    background.appendChild(backgroundOver);
-    background.appendChild(backgroundLeftOverStatic);
-    background.appendChild(backgroundRightOverStatic);
-    background.appendChild(backgroundOverStatic);
+    backgroundContainer.appendChild(background);
+    backgroundContainer.appendChild(backgroundOver);
+    backgroundContainer.appendChild(backgroundLeftOverStatic);
+    backgroundContainer.appendChild(backgroundRightOverStatic);
+    backgroundContainer.appendChild(backgroundOverStatic);
     var numberOfSteps = (this.maxValue-this.minValue)/this.step;
     console.log(numberOfSteps);
     var lineStep = 360/numberOfSteps;
@@ -125,9 +134,9 @@ class Slider {
       line.style.backgroundColor = 'white';
       line.style.opacity = '0.5';
       line.style.transform = 'rotate(' + i * lineStep + 'deg)';
-      background.appendChild(line);
+      backgroundContainer.appendChild(line);
     }
-    return background;
+    return backgroundContainer;
   }
 
   createSlider() {
@@ -184,17 +193,24 @@ class Slider {
       }
       window.isClicked = true;
       e.target.parentElement.style.zIndex = 199;
+      e.target.parentElement.sliderButton = this;
+      e.target.parentElement.numberOfSliders = numberOfSliders;
+      e.target.parentElement.addEventListener("mousemove", onMouseMove);
     };
     document.onmouseup = function(e) {
       window.isClicked = false;
+      var containers = mainContainer.getElementsByClassName('sliderContainer');
+      for(var i = 0; i < containers.length; i++) {
+        containers[i].removeEventListener("mousemove", onMouseMove);
+      }
     };
     sliderButton.onmousemove = function(e) {
       e.preventDefault();
     }
-    sliderContainer.onmousemove = function(e) {
-      if(window.isClicked) {
-        var mousePosX = e.pageX - mainContainer.offsetLeft - (slider.padding * numberOfSliders) - sliderButton.clientWidth;
-        var mousePosY = e.pageY - mainContainer.offsetTop - (slider.padding * numberOfSliders) - sliderButton.clientWidth;
+    function onMouseMove(e) {
+      if(window.isClicked && e.target.sliderButton) {
+        var mousePosX = e.pageX - mainContainer.offsetLeft - (slider.padding * numberOfSliders) - e.target.sliderButton.clientWidth;
+        var mousePosY = e.pageY - mainContainer.offsetTop - (slider.padding * numberOfSliders) - e.target.sliderButton.clientWidth;
         var arctangent = Math.atan2(mousePosX - radius, mousePosY - radius);
         console.log(arctangent);
         angle = -arctangent/(Math.PI/180) + 180;
