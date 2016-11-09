@@ -1,41 +1,42 @@
 document.addEventListener('DOMContentLoaded',function(){
+  var defaultRadius = 200;
   var slider = new Slider({
     container: document.getElementById('randomContainer'),
-    color: 'red',
+    color: '#794B90',
     maxValue: 500,
     minValue: 0,
     step: 25,
-    radius: 200,
+    radius: defaultRadius,
     title: 'Transportation'
   });
   slider.createSlider();
   var slider1 = new Slider({
     container: document.getElementById('randomContainer'),
-    color: 'green',
+    color: '#0092C5',
     maxValue: 300,
     minValue: 0,
     step: 25,
-    radius: 200,
+    radius: defaultRadius,
     title: 'Food'
   });
   slider1.createSlider();
   var slider2 = new Slider({
     container: document.getElementById('randomContainer'),
-    color: 'blue',
+    color: '#14A22F',
     maxValue: 500,
     minValue: 0,
     step: 25,
-    radius: 200,
+    radius: defaultRadius,
     title: 'Insurance'
   });
   slider2.createSlider();
   var slider3 = new Slider({
     container: document.getElementById('randomContainer'),
-    color: 'violet',
+    color: '#F68A24',
     maxValue: 400,
     minValue: 0,
     step: 10,
-    radius: 200,
+    radius: defaultRadius,
     title: 'Entertainment'
   });
   slider3.createSlider();
@@ -64,10 +65,11 @@ Slider.prototype.addProgressElements = function(radius, offset, sliderNumber) {
   backgroundContainer.style.backgroundColor = 'transparent';
 
   var background = document.createElement('div');
-  background.style.width = radius*2 - (this.padding*2 * (sliderNumber+1)) - 2 + 'px';
-  background.style.height = radius*2 - (this.padding*2 * (sliderNumber+1)) - 2 + 'px';
+  background.style.width = (radius*2 - (this.padding*2 * (sliderNumber+1)) - 2*this.buttonSize - 2) + 'px';
+  background.style.height = (radius*2 - (this.padding*2 * (sliderNumber+1)) - 2*this.buttonSize - 2) + 'px';
   background.style.borderRadius = radius + 'px';
-  background.style.backgroundColor = this.color;
+  background.style.border = this.buttonSize + 'px solid ' + this.color;
+  background.style.background = 'transparent';
   background.style.top = 1 + 'px';
   background.style.left = 1 + 'px';
   background.style.position = 'absolute';
@@ -79,63 +81,62 @@ Slider.prototype.addProgressElements = function(radius, offset, sliderNumber) {
   backgroundOver.id = 'backgroundOver' + sliderNumber;
 
   var backgroundLeftOverStatic = document.createElement('div');
-  backgroundLeftOverStatic.style.width = radius - (this.padding * (sliderNumber+1)) + 'px';
-  backgroundLeftOverStatic.style.height = radius*2 - (this.padding*2 * (sliderNumber+1)) + 'px';
+  backgroundLeftOverStatic.style.width = (radius*2 - (this.padding*2 * (sliderNumber+1)))/2 - this.buttonSize - 2 + 'px';
+  backgroundLeftOverStatic.style.height = (radius*2 - (this.padding*2 * (sliderNumber+1)) - 2*this.buttonSize - 4) + 'px';
   backgroundLeftOverStatic.style.borderBottomLeftRadius = radius + 'px';
   backgroundLeftOverStatic.style.borderTopLeftRadius = radius + 'px';
-  backgroundLeftOverStatic.style.backgroundColor = '#dbdbdb';
+  backgroundLeftOverStatic.style.backgroundColor = 'transparent';
+  backgroundLeftOverStatic.style.border = this.buttonSize+2 + 'px solid #dbdbdb';
+  backgroundLeftOverStatic.style.borderRight = 0;
   backgroundLeftOverStatic.style.position = 'absolute';
   backgroundLeftOverStatic.style.top = 0 + 'px';
   backgroundLeftOverStatic.style.left = 0 + 'px';
   backgroundLeftOverStatic.id = 'backgroundLeftOverStatic' + sliderNumber;
-  
+
   var backgroundRightOver = document.createElement('div');
-  backgroundRightOver.style.width = (radius*2 - (this.padding*2 * (sliderNumber+1)))/2 + 'px';
-  backgroundRightOver.style.height = radius*2 - (this.padding*2 * (sliderNumber+1)) + 'px';
+  backgroundRightOver.style.width = (radius*2 - (this.padding*2 * (sliderNumber+1)))/2 - this.buttonSize - 2 + 'px';
+  backgroundRightOver.style.height = (radius*2 - (this.padding*2 * (sliderNumber+1)) - 2*this.buttonSize - 4) + 'px';
   backgroundRightOver.style.borderTopRightRadius = radius + 'px';
   backgroundRightOver.style.borderBottomRightRadius = radius + 'px';
-  backgroundRightOver.style.left = radius - (this.padding * (sliderNumber+1)) + 'px';
+  backgroundRightOver.style.top = 0 + 'px';
+  backgroundRightOver.style.left = (radius*2 - (this.padding*2 * (sliderNumber+1)))/2 + 'px';
   backgroundRightOver.style.position = 'absolute';
-  backgroundRightOver.style.backgroundColor = '#dbdbdb';
+  backgroundRightOver.style.border = this.buttonSize+2 + 'px solid #dbdbdb';
+  backgroundRightOver.style.borderLeft = 0;
+  backgroundRightOver.style.backgroundColor = 'transparent';
 
   var backgroundRightOverStatic = document.createElement('div');
-  backgroundRightOverStatic.style.width = radius - (this.padding * (sliderNumber+1)) - 1 + 'px';
-  backgroundRightOverStatic.style.height = radius*2 - (this.padding*2 * (sliderNumber+1)) - 2 + 'px';
+  backgroundRightOverStatic.style.width = (radius*2 - (this.padding*2 * (sliderNumber+1)))/2 - this.buttonSize - 2 + 'px';
+  backgroundRightOverStatic.style.height = (radius*2 - (this.padding*2 * (sliderNumber+1)) - 2*this.buttonSize - 2) + 'px';
   backgroundRightOverStatic.style.borderTopRightRadius = radius + 'px';
   backgroundRightOverStatic.style.borderBottomRightRadius = radius + 'px';
   backgroundRightOverStatic.style.top = 1 + 'px';
-  backgroundRightOverStatic.style.left = radius - (this.padding * (sliderNumber+1));
+  backgroundRightOverStatic.style.left = (radius*2 - (this.padding*2 * (sliderNumber+1)))/2 + 'px';
   backgroundRightOverStatic.style.position = 'absolute';
-  backgroundRightOverStatic.style.backgroundColor = this.color;
+  backgroundRightOverStatic.style.backgroundColor = 'transparent';
+  backgroundRightOverStatic.style.border = this.buttonSize + 'px solid ' + this.color;
+  backgroundRightOverStatic.style.borderLeft = 0;
   backgroundRightOverStatic.style.display = 'none';
   backgroundRightOverStatic.id = 'backgroundRightOverStatic' + sliderNumber;
 
-  var backgroundOverStatic = document.createElement('div');
-  backgroundOverStatic.style.width = radius*2 - this.buttonSize*2 - (this.padding*2 * (sliderNumber+1)) + 'px';
-  backgroundOverStatic.style.height = radius*2 - this.buttonSize*2 - (this.padding*2 * (sliderNumber+1)) + 'px';
-  backgroundOverStatic.style.borderRadius = radius - this.buttonSize + 'px';
-  backgroundOverStatic.style.top = this.buttonSize + 'px';
-  backgroundOverStatic.style.left = this.buttonSize + 'px';
-  backgroundOverStatic.style.position = 'absolute';
-  backgroundOverStatic.style.backgroundColor = 'white';
-  
   backgroundOver.appendChild(backgroundRightOver);
   backgroundContainer.appendChild(background);
   backgroundContainer.appendChild(backgroundOver);
   backgroundContainer.appendChild(backgroundLeftOverStatic);
   backgroundContainer.appendChild(backgroundRightOverStatic);
-  backgroundContainer.appendChild(backgroundOverStatic);
   var numberOfSteps = (this.maxValue-this.minValue)/this.step;
   var lineStep = 360/numberOfSteps;
   for (var i = 0; i < numberOfSteps; i++) {
+    X = Math.round((radius - this.buttonSize/2 - (this.padding * (sliderNumber+1)) - 1) * Math.sin((i * lineStep)*Math.PI/180));
+    Y = Math.round((radius - this.buttonSize/2 - (this.padding * (sliderNumber+1)) - 1) * -Math.cos((i * lineStep)*Math.PI/180));
     var line = document.createElement('div');
-    line.style.width = radius*2 - (this.padding*2 * (sliderNumber+1)) + 'px';
-    line.style.height = Math.floor(this.buttonSize * 0.1) + 'px';
+    line.style.width = Math.ceil(this.buttonSize * 0.1) + 'px';
+    line.style.height = this.buttonSize + 2 + 'px';
     line.style.position = 'absolute';
-    line.style.top = (radius*2 - (this.padding*2 * (sliderNumber+1)))/2 + 'px';
-    line.style.left = 0 + 'px';
+    line.style.top = Y + radius - this.buttonSize/2 - (this.padding * (sliderNumber+1)) - 1 + 'px';
+    line.style.left = X + radius - (this.padding * (sliderNumber+1)) - 1 + 'px';
     line.style.backgroundColor = 'white';
-    line.style.opacity = '0.5';
+    line.style.opacity = '0.6';
     line.style.transform = 'rotate(' + i * lineStep + 'deg)';
     line.style.msTransform = 'rotate(' + i * lineStep + 'deg)';
     backgroundContainer.appendChild(line);
@@ -173,10 +174,10 @@ Slider.prototype.createValues = function(sliderNumber) {
 
   var valueItemContainer = document.createElement('div');
   valueItemContainer.style.width = this.radius + 'px';
-  valueItemContainer.style.height = this.radius * (60/200) + 'px';
+  valueItemContainer.style.height = this.radius * 0.25 + 'px';
 
   var currencyContainer = document.createElement('div');
-  currencyContainer.style.height = this.radius * (60/200) + 'px';
+  currencyContainer.style.height = this.radius * 0.25 + 'px';
   currencyContainer.style.width = this.radius * 26/200 + 'px';
   currencyContainer.style.cssFloat = 'left';
   currencyContainer.style.position = 'relative';
@@ -184,14 +185,14 @@ Slider.prototype.createValues = function(sliderNumber) {
   var currency = document.createElement('div');
   currency.style.fontSize = this.radius * (38/200) + 'px';
   currency.style.position = 'absolute';
-  currency.style.bottom = -this.radius * (10/200) + 'px';
+  currency.style.bottom = -this.radius * 0.05 + 'px';
   currency.innerHTML = '$';
   currency.style.fontFamily = "Arial,Gadget,sans-serif";
   currency.style.fontWeight = 'bold';
   currencyContainer.appendChild(currency);
 
   var valueContainer = document.createElement('div');
-  valueContainer.style.height = this.radius * (60/200) + 'px';
+  valueContainer.style.height = this.radius * 0.25 + 'px';
   valueContainer.style.width = this.radius * (75/200) + 'px';
   valueContainer.style.cssFloat = 'left';
   valueContainer.style.position = 'relative';
@@ -199,7 +200,7 @@ Slider.prototype.createValues = function(sliderNumber) {
   var value = document.createElement('div');
   value.style.fontSize = this.radius * (38/200) + 'px';
   value.style.position = 'absolute';
-  value.style.bottom = -this.radius * 10/200 + 'px';
+  value.style.bottom = -this.radius * 0.05 + 'px';
   value.style.fontFamily = "Arial,Gadget,sans-serif";
   value.style.fontWeight = 'bold';
   value.innerHTML = '0';
@@ -207,8 +208,8 @@ Slider.prototype.createValues = function(sliderNumber) {
   valueContainer.appendChild(value);
 
   var labelContainer = document.createElement('div');
-  labelContainer.style.height = this.radius * (60/200) + 'px';
-  labelContainer.style.width = this.radius * (60/200) + 'px';
+  labelContainer.style.height = this.radius * 0.25 + 'px';
+  labelContainer.style.width = this.radius * 0.25 + 'px';
   labelContainer.style.cssFloat = 'left';
   labelContainer.style.position = 'relative';
   labelContainer.style.marginLeft = this.radius * (5/200) + 'px';
@@ -222,7 +223,7 @@ Slider.prototype.createValues = function(sliderNumber) {
   labelContainer.appendChild(label);
 
   var colorContainer = document.createElement('div');
-  colorContainer.style.height = this.radius * (60/200) + 'px';
+  colorContainer.style.height = this.radius * 0.25 + 'px';
   colorContainer.style.width = this.radius * (15/200) + 'px';
   colorContainer.style.cssFloat = 'left';
   colorContainer.style.position = 'relative';
