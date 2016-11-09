@@ -83,7 +83,6 @@ Slider.prototype.addProgressElements = function(radius, offset, sliderNumber) {
   'border-bottom-left-radius:' + radius + 'px;border-top-left-radius:'+ radius + 'px;'+
   'background-color:transparent;border:' + (this.buttonSize+2) + 'px solid #dbdbdb;'+
   'border-right:0;position:absolute;top:0px;left:0px;';
-  console.log(backgroundLeftOverStatic.style.cssText);
   backgroundLeftOverStatic.id = 'backgroundLeftOverStatic' + sliderNumber;
 
   var backgroundRightOver = document.createElement('div');
@@ -197,8 +196,7 @@ Slider.prototype.createValues = function(sliderNumber) {
 
 Slider.prototype.createSlider = function() {
   var slider = this;
-  window.isClicked = false;
-  var padding = 10;
+  var isClicked = false;
   var mainContainer = this.container;
   var numberOfSliders = mainContainer.getElementsByClassName('sliderButton').length;
 
@@ -224,7 +222,7 @@ Slider.prototype.createSlider = function() {
   sliderButton.className = 'sliderButton';
   sliderButton.id = 'sliderButton' + numberOfSliders;
 
-  var radius = slider.radius - (numberOfSliders * this.buttonSize) - sliderButton.clientWidth/2;
+  var radius = slider.radius - (numberOfSliders * this.buttonSize);
   sliderMainContainer.appendChild(slider.addProgressElements(radius, numberOfSliders * this.buttonSize, numberOfSliders));
   sliderContainer.appendChild(sliderButton);
   sliderMainContainer.appendChild(sliderContainer);
@@ -245,8 +243,8 @@ Slider.prototype.createSlider = function() {
   var X, Y;
   var stepInDegrees = 360 / ((slider.maxValue - slider.minValue) / slider.step);
 
-  sliderButton.style.left = slider.radius - sliderButton.clientWidth/2 + 'px';
-  sliderButton.style.top = (numberOfSliders * sliderButton.clientWidth) + (this.padding * (numberOfSliders+1)) + 'px';
+  sliderButton.style.left = slider.radius - this.buttonSize/2 + 'px';
+  sliderButton.style.top = (numberOfSliders * this.buttonSize) + (this.padding * (numberOfSliders+1)) + 'px';
 
   mainContainer.style.backgroundImage = 'linear-gradient(180deg, #f9f9f9, #e5e5e5)';
 
@@ -274,14 +272,14 @@ Slider.prototype.createSlider = function() {
     for(var i = 0; i < containers.length; i++) {
       containers[i].style.removeProperty('z-index');
     }
-    window.isClicked = true;
+    isClicked = true;
     e.target.parentElement.style.zIndex = 199;
     e.target.parentElement.addEventListener(events.onmove, onMouseMove);
   };
 
   document.addEventListener(events.onup, onMouseUp);
   function onMouseUp(e) {
-    window.isClicked = false;
+    isClicked = false;
     var containers = mainContainer.getElementsByClassName('sliderContainer');
     for(var i = 0; i < containers.length; i++) {
       containers[i].removeEventListener(events.onmove, onMouseMove);
@@ -291,7 +289,7 @@ Slider.prototype.createSlider = function() {
     if (/Mobi/.test(navigator.userAgent)) {
       e.preventDefault();
     }
-    if(window.isClicked) {
+    if(isClicked) {
       var touch;
       if(e.touches) {
         touch = e.touches[0];
@@ -299,9 +297,9 @@ Slider.prototype.createSlider = function() {
       var pos_x = e.pageX || touch.pageX;
       var pos_y = e.pageY || touch.pageY;
       var mousePosX = pos_x - mainContainer.offsetLeft - sliderMainContainer.offsetLeft -
-      (slider.padding * numberOfSliders) - sliderButton.clientWidth;
+      (slider.padding * numberOfSliders) - slider.buttonSize;
       var mousePosY = pos_y - mainContainer.offsetTop - sliderMainContainer.offsetTop -
-      (slider.padding * numberOfSliders) - sliderButton.clientWidth;
+      (slider.padding * numberOfSliders) - slider.buttonSize;
       var arctangent = Math.atan2(mousePosX - radius, mousePosY - radius);
       angle = -arctangent/(Math.PI/180) + 180;
       
@@ -311,16 +309,16 @@ Slider.prototype.createSlider = function() {
         angle = Math.floor(angle/stepInDegrees) * stepInDegrees;
       }
 
-      X = Math.round((radius - sliderButton.clientWidth/2 - (slider.padding * (numberOfSliders+1))) * Math.sin(angle*Math.PI/180));
-      Y = Math.round((radius - sliderButton.clientWidth/2 - (slider.padding * (numberOfSliders+1))) * -Math.cos(angle*Math.PI/180));
+      X = Math.round((radius - slider.buttonSize/2 - (slider.padding * (numberOfSliders+1))) * Math.sin(angle*Math.PI/180));
+      Y = Math.round((radius - slider.buttonSize/2 - (slider.padding * (numberOfSliders+1))) * -Math.cos(angle*Math.PI/180));
 
       if((angle - lastAngle) > 180 || (lastAngle - angle) > 180) {
         return;
       }
 
       document.getElementById('value'+(numberOfSliders+1)).innerHTML = Math.round((angle/360) * slider.maxValue);
-      sliderButton.style.left = X + radius + numberOfSliders*sliderButton.clientWidth - sliderButton.clientWidth/2 + 'px';
-      sliderButton.style.top = Y + radius + numberOfSliders*sliderButton.clientWidth - sliderButton.clientWidth/2 + 'px';
+      sliderButton.style.left = X + radius + numberOfSliders*slider.buttonSize - slider.buttonSize/2 + 'px';
+      sliderButton.style.top = Y + radius + numberOfSliders*slider.buttonSize - slider.buttonSize/2 + 'px';
 
       document.getElementById('backgroundLeftOverStatic' + numberOfSliders).style.display = angle > 180 ? 'none' : 'block';
       document.getElementById('backgroundRightOverStatic' + numberOfSliders).style.display = angle > 180 ? 'block' : 'none';
