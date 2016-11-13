@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded',function(){
   });
   slider1.createSlider();
   var slider2 = new Slider({
-    container: document.getElementById('randomContainer'),
+    container: document.getElementById('randomContainer1'),
     color: '#14A22F',
     maxValue: 500,
     minValue: 0,
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded',function(){
   });
   slider2.createSlider();
   var slider3 = new Slider({
-    container: document.getElementById('randomContainer'),
+    container: document.getElementById('randomContainer1'),
     color: '#F68A24',
     maxValue: 400,
     minValue: 0,
@@ -49,9 +49,9 @@ var Slider = function(options) {
   this.maxValue = options.maxValue;
   this.minValue = options.minValue;
   this.step = options.step;
-  this.radius = window.innerWidth < options.radius*2 ||
-  (/Mobi/.test(navigator.userAgent) && window.innerWidth < window.innerHeight) ?
-  window.innerWidth/2 - 15 : options.radius;
+  this.isFullScreen = window.innerWidth < options.radius*2 ||
+  (this.isMobileBrowser && window.innerWidth < window.innerHeight);
+  this.radius = this.isFullScreen ? window.innerWidth/2 - 15 : options.radius;
   this.padding = Math.ceil(this.radius*0.05);
   this.buttonSize = Math.ceil(this.radius*0.1);
   this.title = options.title;
@@ -77,7 +77,7 @@ Slider.prototype.addProgressElements = function(radius, offset, sliderNumber) {
   backgroundOver.style.cssText = 'width:' + (radius*2 - (this.padding*2 * (sliderNumber+1))) + 'px;'+
   'height:' + (radius*2 - (this.padding*2 * (sliderNumber+1))) + 'px;'+
   'background-color:transparent;';
-  backgroundOver.id = 'backgroundOver' + sliderNumber;
+  backgroundOver.id = this.container.id + 'backgroundOver' + sliderNumber;
 
   var backgroundLeftOverStatic = document.createElement('div');
   backgroundLeftOverStatic.style.cssText = 'width:' + ((radius*2 - (this.padding*2 * (sliderNumber+1)))/2 - this.buttonSize - 2) + 'px;'+
@@ -85,7 +85,7 @@ Slider.prototype.addProgressElements = function(radius, offset, sliderNumber) {
   'border-bottom-left-radius:' + radius + 'px;border-top-left-radius:'+ radius + 'px;'+
   'background-color:transparent;border:' + (this.buttonSize+2) + 'px solid #dbdbdb;'+
   'border-right:0;position:absolute;top:0px;left:0px;';
-  backgroundLeftOverStatic.id = 'backgroundLeftOverStatic' + sliderNumber;
+  backgroundLeftOverStatic.id = this.container.id + 'backgroundLeftOverStatic' + sliderNumber;
 
   var backgroundRightOver = document.createElement('div');
   backgroundRightOver.style.cssText = 'width:' + ((radius*2 - (this.padding*2 * (sliderNumber+1)))/2 - this.buttonSize - 2) + 'px;'+
@@ -101,7 +101,7 @@ Slider.prototype.addProgressElements = function(radius, offset, sliderNumber) {
   'top:1px;left:' + (radius*2 - (this.padding*2 * (sliderNumber+1)))/2 + 'px;'+
   'position:absolute;backgroundColor:transparent;border:' + this.buttonSize + 'px solid ' + this.color+
   ';border-left:0;display:none;';
-  backgroundRightOverStatic.id = 'backgroundRightOverStatic' + sliderNumber;
+  backgroundRightOverStatic.id = this.container.id + 'backgroundRightOverStatic' + sliderNumber;
 
   backgroundOver.appendChild(backgroundRightOver);
   backgroundContainer.appendChild(background);
@@ -124,29 +124,31 @@ Slider.prototype.addProgressElements = function(radius, offset, sliderNumber) {
 }
 
 Slider.prototype.createValues = function(sliderNumber) {
-  if(!document.getElementById('valuesMainContainer')) {
+  if(!document.getElementById(this.container.id + 'valuesMainContainer')) {
     var valuesMainContainer = document.createElement('div');
-    valuesMainContainer.style.cssText = 'width:' + this.radius + 'px;'+ 'height:' + (this.radius*2) + 'px;'+
+    valuesMainContainer.style.cssText = 'width:' + this.radius + 'px;'+ (this.isFullScreen ? '' : ('height:' + (this.radius*2) + 'px;')) +
     'float:left;display:inline-block;';
-    valuesMainContainer.id = 'valuesMainContainer';
-
-    var valuesInnerContainerForAllign = document.createElement('div');
-    valuesInnerContainerForAllign.id = 'valuesInnerContainerFull';
-    valuesInnerContainerForAllign.style.cssText = 'width:1px;height:' + (this.radius*2) + 'px;'+
-    'display:inline-block;vertical-align:middle;';
+    valuesMainContainer.id = this.container.id + 'valuesMainContainer';
+    if (!this.isFullScreen) {
+      var valuesInnerContainerForAllign = document.createElement('div');
+      valuesInnerContainerForAllign.id = this.container.id + 'valuesInnerContainerFull';
+      valuesInnerContainerForAllign.style.cssText = 'width:1px;height:' + (this.radius*2) + 'px;'+
+      'display:inline-block;vertical-align:middle;';
+      valuesMainContainer.appendChild(valuesInnerContainerForAllign);
+    }
     
     var valuesInnerContainer = document.createElement('div');
-    valuesInnerContainer.id = 'valuesInnerContainer';
-    valuesInnerContainer.style.cssText = 'width:' + (this.radius-1) + 'px;display:inline-block;vertical-align:middle;';
-    valuesMainContainer.appendChild(valuesInnerContainerForAllign);
+    valuesInnerContainer.id = this.container.id + 'valuesInnerContainer';
+    valuesInnerContainer.style.cssText = 'width:' + (this.isFullScreen ? this.radius*2 : (this.radius-1)) + 'px;display:inline-block;vertical-align:middle;';
     valuesMainContainer.appendChild(valuesInnerContainer);
   } else {
-    var valuesMainContainer = document.getElementById('valuesMainContainer');
-    var valuesInnerContainer = document.getElementById('valuesInnerContainer');
+    var valuesMainContainer = document.getElementById(this.container.id + 'valuesMainContainer');
+    var valuesInnerContainer = document.getElementById(this.container.id + 'valuesInnerContainer');
   }
 
   var valueItemContainer = document.createElement('div');
-  valueItemContainer.style.cssText =  'width:' + this.radius + 'px;height:' + (this.radius * 0.25) + 'px;';
+  valueItemContainer.style.cssText =  'width:' + (this.isFullScreen ? '50%' : this.radius-2)
+  + 'px;height:' + (this.radius * 0.25) + 'px;float:left;';
 
   var currencyContainer = document.createElement('div');
   currencyContainer.style.cssText = 'height:' + this.radius * 0.25 + 'px;width:' + this.radius * 26/200 + 'px;'+
@@ -166,7 +168,7 @@ Slider.prototype.createValues = function(sliderNumber) {
   value.style.cssText = 'font-size:' + (this.radius * (38/200)) + 'px;position:absolute;bottom:' + (-this.radius * 0.05) + 'px;'+
   'font-family:Arial,Gadget,sans-serif;font-weight:bold;';
   value.innerHTML = this.minValue;
-  value.id = 'value' + sliderNumber;
+  value.id = this.container.id + 'value' + sliderNumber;
   valueContainer.appendChild(value);
 
   var labelContainer = document.createElement('div');
@@ -192,7 +194,7 @@ Slider.prototype.createValues = function(sliderNumber) {
   valueItemContainer.appendChild(valueContainer);
   valueItemContainer.appendChild(colorContainer);
   valueItemContainer.appendChild(labelContainer);
-  valuesInnerContainer.appendChild(valueItemContainer)
+  valuesInnerContainer.appendChild(valueItemContainer);
   return valuesMainContainer;
 }
 
@@ -202,19 +204,19 @@ Slider.prototype.createSlider = function() {
   var mainContainer = this.container;
   var numberOfSliders = mainContainer.getElementsByClassName('sliderButton').length;
 
-  if(!document.getElementById('sliderMainContainer')) {
+  if(!document.getElementById(this.container.id + 'sliderMainContainer')) {
     var sliderMainContainer = document.createElement('div');
     sliderMainContainer.style.cssText = 'width:' + (this.radius*2) + 'px;height:' + (this.radius*2) + 'px;'+
     'position:relative;float:left;';
-    sliderMainContainer.id = 'sliderMainContainer';
+    sliderMainContainer.id = this.container.id + 'sliderMainContainer';
   } else {
-    var sliderMainContainer = document.getElementById('sliderMainContainer');
+    var sliderMainContainer = document.getElementById(this.container.id + 'sliderMainContainer');
   }
 
   var sliderContainer = document.createElement('div');
   sliderContainer.style.cssText = 'width:' + (this.radius*2) + 'px;height:' + this.radius*2 + 'px;position:absolute;';
   sliderContainer.className = 'sliderContainer';
-  sliderContainer.id = 'sliderContainer' + numberOfSliders;
+  sliderContainer.id = this.container.id + 'sliderContainer' + numberOfSliders;
 
 
   var sliderButton = document.createElement('div');
@@ -222,7 +224,7 @@ Slider.prototype.createSlider = function() {
   'width:' + this.buttonSize + 'px;height:' + this.buttonSize + 'px;border-radius:50%;position:absolute;z-index:200;'+
   'border:' + Math.floor(this.buttonSize * 0.05) + 'px solid #c6c6c6;';
   sliderButton.className = 'sliderButton';
-  sliderButton.id = 'sliderButton' + numberOfSliders;
+  sliderButton.id = this.container.id + 'sliderButton' + numberOfSliders;
 
   var radius = this.radius - (numberOfSliders * this.buttonSize);
   sliderMainContainer.appendChild(this.addProgressElements(radius, numberOfSliders * this.buttonSize, numberOfSliders));
@@ -231,10 +233,10 @@ Slider.prototype.createSlider = function() {
 
   var values = this.createValues(numberOfSliders+1);
 
-  if(!document.getElementById('valuesMainContainer')) {
+  if(!document.getElementById(this.container.id + 'valuesMainContainer')) {
     mainContainer.appendChild(values);
   }
-  if(!document.getElementById('sliderMainContainer')) {
+  if(!document.getElementById(this.container.id + 'sliderMainContainer')) {
     mainContainer.appendChild(sliderMainContainer);
   }
 
@@ -318,15 +320,15 @@ Slider.prototype.createSlider = function() {
         return;
       }
 
-      document.getElementById('value'+(numberOfSliders+1)).innerHTML = Math.round((angle/360)*(this.maxValue - this.minValue) + this.minValue);
+      document.getElementById(this.container.id + 'value'+(numberOfSliders+1)).innerHTML = Math.round((angle/360)*(this.maxValue - this.minValue) + this.minValue);
       sliderButton.style.left = X + radius + numberOfSliders*this.buttonSize - this.buttonSize/2 + 'px';
       sliderButton.style.top = Y + radius + numberOfSliders*this.buttonSize - this.buttonSize/2 + 'px';
 
-      document.getElementById('backgroundLeftOverStatic' + numberOfSliders).style.display = angle > 180 ? 'none' : 'block';
-      document.getElementById('backgroundRightOverStatic' + numberOfSliders).style.display = angle > 180 ? 'block' : 'none';
+      document.getElementById(this.container.id + 'backgroundLeftOverStatic' + numberOfSliders).style.display = angle > 180 ? 'none' : 'block';
+      document.getElementById(this.container.id + 'backgroundRightOverStatic' + numberOfSliders).style.display = angle > 180 ? 'block' : 'none';
 
-      document.getElementById('backgroundOver' + numberOfSliders).style.transform = 'rotate(' + angle + 'deg)';
-      document.getElementById('backgroundOver' + numberOfSliders).style.msTransform = 'rotate(' + angle + 'deg)';
+      document.getElementById(this.container.id + 'backgroundOver' + numberOfSliders).style.transform = 'rotate(' + angle + 'deg)';
+      document.getElementById(this.container.id + 'backgroundOver' + numberOfSliders).style.msTransform = 'rotate(' + angle + 'deg)';
 
       lastAngle = angle;
     }
